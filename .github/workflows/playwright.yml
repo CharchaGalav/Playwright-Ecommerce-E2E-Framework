@@ -6,7 +6,7 @@ on:
     branches: [ main, master ]
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -15,13 +15,9 @@ jobs:
         node-version: lts/*
     - name: Install dependencies
       run: npm ci
+    - name: Type-check the test suite
+      run: npx tsc --noEmit
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+    - name: Verify tests are discoverable (no live Medusa instance in CI yet)
+      run: npx playwright test --list
